@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockPredictor - How It Works</title>
+
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#10b981',
+                        'secondary': '#1f2937',
+                        'background': '#0f172a',
+                        'text-light': '#f3f4f6',
+                        'red-alert': '#ef4444',
+                        'green-success': '#10b981',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+    </style>
+</head>
+
+<body class="bg-background text-text-light font-sans">
+
+<!-- NAVBAR -->
+<header class="bg-secondary shadow-lg sticky top-0 z-10">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <a href="index.html" class="text-2xl font-bold text-primary">
+            StockPredictor <span class="text-text-light">ML</span>
+        </a>
+        <nav class="hidden md:flex gap-6 text-lg">
+            <a href="{{ url_for('index') }}" class="hover:text-primary">Home</a>
+            <a href="{{ url_for('search_page') }}" class="hover:text-primary">Search</a>
+            <a href="{{ url_for('how_page') }}" class="hover:text-primary">How It Works</a>
+        </nav>
+
+    </div>
+</header>
+
+<main class="min-h-screen py-20 bg-gray-900 border-t border-gray-800">
+    <div class="container mx-auto px-6 max-w-5xl">
+        <h2 class="text-4xl font-bold mb-6 text-center">How StockPredictor ML Works</h2>
+        <p class="text-gray-400 text-center max-w-3xl mx-auto mb-12">
+            This project is a simple end-to-end machine learning web application. It connects a stock data source,
+            a time-series prediction model, and a minimal front-end interface to forecast the next day’s closing price.
+        </p>
+
+        <!-- Steps -->
+        <div class="grid gap-8 md:grid-cols-3 mb-12">
+            <div class="bg-secondary rounded-2xl p-6 border border-gray-700">
+                <h3 class="text-xl font-semibold mb-3">1. Data Ingestion</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    For a given ticker symbol, the backend downloads recent daily OHLC (Open, High, Low, Close) data.
+                    Only the closing price series is used as the target variable for prediction.
+                </p>
+            </div>
+            <div class="bg-secondary rounded-2xl p-6 border border-gray-700">
+                <h3 class="text-xl font-semibold mb-3">2. Feature Engineering</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    The raw price series is transformed into input features. For example, we can create lag features
+                    (previous <code class="font-mono">n</code> days’ closing prices), moving averages, or returns that help the model learn patterns.
+                </p>
+            </div>
+            <div class="bg-secondary rounded-2xl p-6 border border-gray-700">
+                <h3 class="text-xl font-semibold mb-3">3. Model Training</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    A regression model (e.g., Linear Regression, Random Forest Regressor, or LSTM)
+                    is trained on historical data. The model learns to map the engineered features to the next day’s close.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-2 mb-12">
+            <div class="bg-secondary rounded-2xl p-6 border border-gray-700">
+                <h3 class="text-xl font-semibold mb-3">4. Prediction Endpoint</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    The backend exposes a REST endpoint, for example:
+                    <code class="font-mono break-all">/predict?symbol=AAPL</code>.
+                    When the front-end calls this endpoint, the server:
+                </p>
+                <ul class="list-disc list-inside text-gray-400 text-sm mt-3 space-y-1">
+                    <li>Fetches the latest stock data.</li>
+                    <li>Builds the input features.</li>
+                    <li>Uses the trained model to predict the next closing price.</li>
+                    <li>Returns JSON with the current price, predicted price, signal, and recent history.</li>
+                </ul>
+            </div>
+
+            <div class="bg-secondary rounded-2xl p-6 border border-gray-700">
+                <h3 class="text-xl font-semibold mb-3">5. Front-End Visualization</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    The Search page uses JavaScript to:
+                </p>
+                <ul class="list-disc list-inside text-gray-400 text-sm mt-3 space-y-1">
+                    <li>Send the ticker symbol to the <code class="font-mono">/predict</code> endpoint.</li>
+                    <li>Plot the last 60 days of closing prices on a custom canvas-based line chart.</li>
+                    <li>Display the predicted price, approximate confidence score, and a Buy/Hold/Sell signal.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Limitations and disclaimer -->
+        <div class="bg-secondary rounded-2xl p-6 border border-yellow-400/60 mb-6">
+            <h3 class="text-xl font-semibold mb-3 text-yellow-300">Model Limitations</h3>
+            <ul class="list-disc list-inside text-gray-300 text-sm space-y-1">
+                <li>Uses only historical price data (no fundamental or news data).</li>
+                <li>Short training window can lead to overfitting or unstable predictions.</li>
+                <li>Markets are noisy and affected by many external factors the model cannot see.</li>
+            </ul>
+        </div>
+
+        <div class="bg-secondary rounded-2xl p-6 border border-red-500/70">
+            <h3 class="text-xl font-semibold mb-2 text-red-alert">Educational Use Only</h3>
+            <p class="text-gray-300 text-sm leading-relaxed">
+                This web app is developed as a coursework project to demonstrate how to integrate a machine learning
+                model into a web application. The predictions are not intended for real trading, and nothing here should
+                be interpreted as financial advice.
+            </p>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center text-gray-400 py-6 border-t border-gray-800">
+    © 2024 StockPredictor ML — All Rights Reserved.
+</footer>
+
+</body>
+</html>
